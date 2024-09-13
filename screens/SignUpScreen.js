@@ -28,9 +28,9 @@ const SignupScreen = () => {
         setIsAvatarMenu(false);
     }
 
-    const handleSignUp = async () => {
+    const handleSignUp = () => {
         if(getEmailValidationStatus && email.length!==""){
-            await createUserWithEmailAndPassword(firebaseAuth, email, password)
+            createUserWithEmailAndPassword(firebaseAuth, email, password)
                 .then((cred) => {
                     const data = {
                         _id: cred.user.uid,
@@ -38,8 +38,8 @@ const SignupScreen = () => {
                         profilePic: avatar,
                         providerData: cred.user.providerData[0]
                     }
-
-                    setDoc(doc(firestoreDB, 'users', cred.user.uid), data).then(() => {
+                    const docRef = doc(firestoreDB, 'users', cred.user.uid);
+                    setDoc(docRef, data).then(() => {
                         navigation.navigate("Login");
                     });
                 })

@@ -15,13 +15,27 @@ const LoginScreen = () => {
   const [password, setPassword] = useState("");
   const [getEmailValidationStatus, setGetEmailValidationStatus] = useState(false);
 
-  // const [alert, setAlert] = useState(false);
-  // const [alertMessage, setAlertMessage] = useState(null);
-
   const navigation = useNavigation();
 
-  const handleLogin = async () => {
+  const handleLogin = () => {
+    if(getEmailValidationStatus && email != " "){
+      signInWithEmailAndPassword(firebaseAuth, email, password)
+        .then((cred) => {
+          // console.log("User ID: ", cred.user.uid);
+          const docRef = doc(firestoreDB, 'users', cred.user.uid);
+          getDoc(docRef).then(docSnap => {
+            if(docSnap.exists()){
+              // console.log("User data: ", docSnap.data());
+              navigation.navigate('Home')
+            }
+          })
+        })
+        .catch(err => {
+          console.log("Error: ", err);
+          alert("Invalid email or password");
+        })
 
+    }
   }
 
   return (
@@ -45,11 +59,6 @@ const LoginScreen = () => {
         <Text className="text-primaryText text-xl font-semibold">Welcome back!</Text>
       
         <View className="w-full flex items-center justify-center">
-          {/* alert */}
-          {/* {alert && (
-            <Text className="text-base text-red-600 ">{alertMessage}</Text>
-          )} */}
-
 
           {/* email */}
           <UserTextInput 
